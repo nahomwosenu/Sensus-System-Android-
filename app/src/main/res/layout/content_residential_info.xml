@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="amu.haimanot.censussystem4arbaminch.ResidentialInfo"
+    tools:showIn="@layout/activity_residential_info">
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="177dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="16dp"
+        android:text="Residential Form"
+        android:textAppearance="@android:style/TextAppearance.Material.Title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="121dp"
+        android:layout_height="51dp"
+        android:layout_marginBottom="16dp"
+        android:text="Next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginRight="41dp"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="121dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="16dp"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/textView21"
+        android:layout_width="92dp"
+        android:layout_height="33dp"
+        android:layout_marginLeft="16dp"
+        android:text="Type:"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="27dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+    <Spinner
+        android:id="@+id/spinType"
+        android:layout_width="238dp"
+        android:layout_height="27dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="21dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="27dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+    <EditText
+        android:id="@+id/etHouseSN"
+        android:layout_width="347dp"
+        android:layout_height="38dp"
+        android:layout_marginLeft="19dp"
+        android:ems="10"
+        android:hint="House Serail No."
+        android:inputType="textPersonName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="25dp"
+        app:layout_constraintTop_toBottomOf="@+id/spinType"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <EditText
+        android:id="@+id/etHouseHoldSN"
+        android:layout_width="347dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="16dp"
+        android:ems="10"
+        android:hint="House Hold Serial No."
+        android:inputType="textPersonName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@+id/etHouseSN"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
+</android.support.constraint.ConstraintLayout>
