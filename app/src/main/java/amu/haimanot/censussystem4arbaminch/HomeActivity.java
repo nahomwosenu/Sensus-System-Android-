@@ -61,4 +61,9 @@ public class HomeActivity extends Activity {
         );
 
     }
+    @Override
+    public void onBackPressed(){
+        Valid.showDialog(this,"Exit","Thanks for using our app");
+        System.exit(0);
+    }
 }

@@ -32,5 +32,11 @@ public class EnumeratorActivity extends AppCompatActivity {
                 }
         );
     }
-
+    @Override
+    public void onBackPressed(){
+        Valid.showDialog(this,"Loggin out","You'll be logged out of the system, you may need to login again to perform additional operations");
+        Intent intent=new Intent(this,HomeActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

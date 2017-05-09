@@ -1,5 +1,6 @@
 package amu.haimanot.censussystem4arbaminch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -38,6 +39,7 @@ public class SearchActivity extends AppCompatActivity {
         btnSearch=(Button)findViewById(R.id.btnSearch);
         btnCancel=(Button)findViewById(R.id.btnCancel);
         lblResult=(TextView)findViewById(R.id.labelResult);
+        getAll();
         etSearch.setOnEditorActionListener(
                 new TextView.OnEditorActionListener() {
                     @Override
@@ -64,15 +66,7 @@ public class SearchActivity extends AppCompatActivity {
                                 String mname=names[2];
                                 person=null;
                                 searchPerson(fname,lname,mname);
-                                Log.d("APP","name searched");
-                                if(person!=null){
-                                    String result="Name: "+person.getFirstName()+" "+person.getLastName()+" "+person.getMiddleName();
-                                    result=result+"\nAge: "+person.getAge()+" Sex: \n"+person.getSex();
-                                    result=result+"\nHome Town: "+person.getTown();
-                                    result=result+"\nMartial Status: "+person.getMartialStatus();
-                                    lblResult.setText(result);
-                                    Log.d("APP","Result: "+person.getFirstName());
-                                }
+
                             }
                             else if(names.length==2){
                                 String fname=names[0];
@@ -87,6 +81,41 @@ public class SearchActivity extends AppCompatActivity {
                 }
         );
     }
+
+    public void getAll(){
+        HashMap map=new HashMap();
+        map.put("request","table");
+        map.put("name","person");
+        AsyncResponse response=new AsyncResponse() {
+            @Override
+            public void processFinish(String s) {
+               if(s==null || s.isEmpty()){
+                    Valid.showDialog(SearchActivity.this,"Error","Connection Failed, please connect to wifi network and try again");
+               }
+               else if(s.contains("error") || s.contains("Error")){
+                   Valid.showDialog(SearchActivity.this,"Error","An Error occured, we'll try to fix the problem soon, sorry");
+               }
+               else{
+                   Log.d("APP","RESULT: "+s);
+                   String[] raw=s.split(":");
+                   int total=Integer.parseInt(raw[0]);
+                   String[] rows=raw[1].split(";");
+                   String[] names=new String[total];
+                   for(int i=0;i<total;i++){
+                       String[] data=rows[i].split(",");
+                       String fn=data[0];
+                       String ln=data[1];
+                       String mn=data[2];
+                       names[i]=fn+" "+ln+" "+mn;
+                   }
+                   ArrayAdapter<String> adapter=new ArrayAdapter<String>(SearchActivity.this,R.layout.support_simple_spinner_dropdown_item,names);
+                   etSearch.setAdapter(adapter);
+               }
+            }
+        };
+        PostResponseAsyncTask task=new PostResponseAsyncTask(this,map,response);
+        task.execute(Login.server+"/census/get.php");
+    }
     public void searchPerson(String fname,String lname){
        HashMap map=new HashMap();
         map.put("firstname",fname);
@@ -96,6 +125,7 @@ public class SearchActivity extends AppCompatActivity {
             public void processFinish(String s) {
                 if(s==null || s.contains("error")){
                     Toast.makeText(SearchActivity.this,"no results found, check your internet connection",Toast.LENGTH_LONG).show();
+                    Log.d("OUT","Result: "+s);
                 }
                 else if(s!=null && s.contains(",") && s.contains(";")){
                     String[] persons=s.split(";");
@@ -139,13 +169,14 @@ public class SearchActivity extends AppCompatActivity {
                     Log.d("APP","name searched");
                     if(p!=null){
                         String result="Name: "+person.getFirstName()+" "+person.getLastName()+" "+person.getMiddleName();
-                        result=result+"\nAge: "+person.getAge()+" Sex: \n"+person.getSex();
+                        result=result+"\nAge: "+person.getAge()+" \nSex: "+person.getSex();
                         result=result+"\nHome Town: "+person.getTown();
                         result=result+"\nMartial Status: "+person.getMartialStatus();
 
                         AlertDialog.Builder dialog=new AlertDialog.Builder(SearchActivity.this);
                         dialog.setTitle("Search Result");
                         dialog.setMessage(result);
+                        dialog.show();
                         Log.d("APP","Result: "+person.getFirstName());
                     }
                 }
@@ -187,5 +218,13 @@ public class SearchActivity extends AppCompatActivity {
         PostResponseAsyncTask task=new PostResponseAsyncTask(this,data,response);
         task.execute(Login.server+"/census/search.php");
     }
-
+    @Override
+    public void onBackPressed(){
+        Intent intent=null;
+        if(Valid.userType.equals("enum"))
+        intent=new Intent(this,EnumeratorActivity.class);
+        else intent=new Intent(this,SupervisorActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

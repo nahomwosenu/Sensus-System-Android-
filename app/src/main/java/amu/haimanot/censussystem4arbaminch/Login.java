@@ -21,7 +21,7 @@ public class Login extends AppCompatActivity implements AsyncResponse {
     Button btnLogin;
     EditText etUsername;
     EditText etPassword;
-    static final String server="http://10.0.3.2";
+    static final String server="http://10.0.3.2:81";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,10 +65,12 @@ public class Login extends AppCompatActivity implements AsyncResponse {
         }
         else if(s!=null) {
             if (s.contains("supervisor")) {
+                Valid.userType="supervisor";
                 Intent intent = new Intent(this, SupervisorActivity.class);
                 startActivity(intent);
                 finish();
             } else if (s.contains("enu")) {
+                Valid.userType="enum";
                 Intent intent = new Intent(this, EnumeratorActivity.class);
                 startActivity(intent);
                 finish();
