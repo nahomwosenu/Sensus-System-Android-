@@ -63,7 +63,8 @@
             android:name=".CensusFormActivity"
             android:label="@string/title_activity_census_form"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AreaIdentificationActivity"></activity>
+        <activity android:name=".AreaIdentificationActivity" />
+        <activity android:name=".ReportActivity"></activity>
     </application>
 
 </manifest>

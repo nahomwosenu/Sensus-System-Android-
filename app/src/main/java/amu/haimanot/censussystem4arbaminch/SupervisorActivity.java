@@ -45,7 +45,11 @@ public class SupervisorActivity extends AppCompatActivity {
                     }
                 }
         );
-
+        findViewById(R.id.btnReport).setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(Veiw veiw)
+                }
+        );
 
     }
 

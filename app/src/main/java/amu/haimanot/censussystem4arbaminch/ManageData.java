@@ -37,7 +37,7 @@ public class ManageData extends AppCompatActivity {
     private LinearLayout tabReport;
     private Button btnDelete;
     private Button btnEdit;
-    private GridLayout dataGrid;
+    private TableLayout dataGrid;
     private EditText etSearch;
     private EditText[] fnames;
     private EditText[] lnames;
@@ -45,6 +45,7 @@ public class ManageData extends AppCompatActivity {
     private EditText[] ids;
     private CheckBox[] chkBox;
     private LinearLayout[] rowLayout;
+    GridLayout tempLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +67,8 @@ public class ManageData extends AppCompatActivity {
         tabReport=(LinearLayout)findViewById(R.id.Report);
         btnDelete=(Button)findViewById(R.id.btnDelete);
         btnEdit=(Button)findViewById(R.id.btnEdit);
-        dataGrid=(GridLayout)findViewById(R.id.dataGrid);
-        dataGrid.setColumnCount(1);
-        dataGrid.setColumnCount(10);
+        dataGrid=(TableLayout) findViewById(R.id.dataGrid);
+
         etSearch.setOnEditorActionListener(
                 new TextView.OnEditorActionListener() {
                     @Override
@@ -90,6 +90,7 @@ public class ManageData extends AppCompatActivity {
                 }
         );
     }
+    static boolean exec=false;
     public void delete(){
         String id="";
         int i=0;
@@ -107,10 +108,11 @@ public class ManageData extends AppCompatActivity {
             @Override
             public void processFinish(String s) {
                 if(s==null || s.isEmpty())
-                    Toast.makeText(ManageData.this,"Connection failed",Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ManageData.this,"Connection failed",Toast.LENGTH_LONG).show();
+                    Log.d("APP","Connection failed");
                 else if(s.contains("error") || s.contains("Error") || s.contains("false")){
                     Log.d("APP","Response: "+s);
-                    Toast.makeText(ManageData.this,"Error occured, please try again letter",Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ManageData.this,"Error occured, please try again letter",Toast.LENGTH_LONG).show();
                 }
                 else if(s.contains("true")){
                     Toast.makeText(ManageData.this,"Items deleted successfully",Toast.LENGTH_LONG).show();
@@ -125,6 +127,7 @@ public class ManageData extends AppCompatActivity {
             Toast.makeText(this,"No items selected",Toast.LENGTH_LONG).show();
             return;
         }
+
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         builder.setTitle("Confirm Delete");
         builder.setMessage("Are you sure to delete "+i+" items?");
@@ -132,7 +135,9 @@ public class ManageData extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        task.execute(Login.server+"/census/get.php");
+
+                        exec=true;
+
                     }
                 }
         );
@@ -142,10 +147,18 @@ public class ManageData extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         Toast.makeText(ManageData.this,"Canceled",Toast.LENGTH_SHORT).show();
+                        exec=false;
                     }
                 }
         );
+        builder.show();
+        if(exec) {
 
+            Toast.makeText(this,"Excec is true & task executed",Toast.LENGTH_LONG).show();
+        }
+        else
+            Toast.makeText(this,"Deletion Canceled",Toast.LENGTH_LONG).show();
+        task.execute(Login.server + "/census/get.php");
     }
     public void search(String term){
         HashMap map=new HashMap();
@@ -173,8 +186,7 @@ public class ManageData extends AppCompatActivity {
             map.put("term",term);
         }
         map.put("request","search");
-        //preprocessing complete
-        //Start Processing
+
         AsyncResponse response=new AsyncResponse() {
             @Override
             public void processFinish(String s) {
@@ -189,7 +201,9 @@ public class ManageData extends AppCompatActivity {
                     Log.d("APP","Response: "+s);
                     String[] row=s.split(";");
                     int total=row.length;
-
+                    LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    TableRow tableRow=new TableRow(ManageData.this);
+                    dataGrid.removeAllViews();
                     fnames=new EditText[total];
                     lnames=new EditText[total];
                     mnames=new EditText[total];
@@ -206,13 +220,18 @@ public class ManageData extends AppCompatActivity {
                     view3.setText("Lastname");
                     TextView view4=new TextView(ManageData.this);
                     view4.setText("MiddleName");
-                    dataGrid.addView(layout);
+                    layout.addView(view1);
+                    layout.addView(view2);
+                    layout.addView(view3);
+                    tableRow.addView(layout);
+
                     EditText.OnEditorActionListener listener=new TextView.OnEditorActionListener() {
                         @Override
                         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                             return onEditComplete(v,actionId,event);
                         }
                     };
+
                     int counter=0;
                     for(String d:row){
                         String[] data=d.split(",");
@@ -241,7 +260,9 @@ public class ManageData extends AppCompatActivity {
                         rowLayout[counter].addView(fnames[counter]);
                         rowLayout[counter].addView(lnames[counter]);
                         rowLayout[counter].addView(mnames[counter]);
-                        dataGrid.addView(rowLayout[counter]);
+                        tableRow=new TableRow(ManageData.this);
+                        tableRow.addView(rowLayout[counter]);
+                        dataGrid.addView(tableRow);
                         counter++;
                     }
                 }
@@ -275,7 +296,6 @@ public class ManageData extends AppCompatActivity {
                 public void processFinish(String s) {
                     if(s==null || s.isEmpty()) {
                         Toast.makeText(ManageData.this, "Connection failed, name not updated", Toast.LENGTH_LONG).show();
-
                     }
                     else if(s.contains("error") || s.contains("Error") || s.contains("false")){
                         Toast.makeText(ManageData.this,"An error occured, please try again letter",Toast.LENGTH_LONG).show();
