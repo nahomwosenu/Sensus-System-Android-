@@ -47,7 +47,11 @@ public class SupervisorActivity extends AppCompatActivity {
         );
         findViewById(R.id.btnReport).setOnClickListener(
                 new Button.OnClickListener(){
-                    public void onClick(Veiw veiw)
+                    public void onClick(View v){
+                        Intent intent=new Intent(SupervisorActivity.this,ReportActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
         );
 

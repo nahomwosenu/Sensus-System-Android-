@@ -30,7 +30,7 @@ import com.kosalgeek.asynctask.PostResponseAsyncTask;
 
 import java.util.HashMap;
 
-public class ManageData extends AppCompatActivity {
+public class ManageData extends AppCompatActivity implements Button.OnClickListener{
 
     private LinearLayout tabData;
     private LinearLayout tabEnum;
@@ -68,7 +68,15 @@ public class ManageData extends AppCompatActivity {
         btnDelete=(Button)findViewById(R.id.btnDelete);
         btnEdit=(Button)findViewById(R.id.btnEdit);
         dataGrid=(TableLayout) findViewById(R.id.dataGrid);
-
+        btnEdit.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(ManageData.this,EditorActivity.class));
+                        finish();
+                    }
+                }
+        );
         etSearch.setOnEditorActionListener(
                 new TextView.OnEditorActionListener() {
                     @Override
@@ -82,15 +90,21 @@ public class ManageData extends AppCompatActivity {
                     }
                 }
         );
-        btnDelete.setOnClickListener(
-                new Button.OnClickListener(){
-                    public void onClick(View v){
-                        delete();
-                    }
-                }
-        );
+        btnDelete.setOnClickListener(this);
     }
     static boolean exec=false;
+    @Override
+    public void onClick(View v){
+        delete();
+    }
+    public void testDelete(){
+        String pid="";
+        HashMap map=new HashMap();
+        map.put("request","delete");
+        map.put("data",pid);
+        map.put("length","5");
+
+    }
     public void delete(){
         String id="";
         int i=0;
@@ -103,62 +117,52 @@ public class ManageData extends AppCompatActivity {
         HashMap map=new HashMap();
         map.put("request","delete");
         map.put("data",id);
-        map.put("length",i);
+        map.put("length",String.valueOf(i));
+        Log.d("APP","IDS: "+id);
         AsyncResponse response=new AsyncResponse() {
             @Override
             public void processFinish(String s) {
+
                 if(s==null || s.isEmpty())
-                    //Toast.makeText(ManageData.this,"Connection failed",Toast.LENGTH_LONG).show();
-                    Log.d("APP","Connection failed");
+                    Toast.makeText(ManageData.this,"Connection failed",Toast.LENGTH_LONG).show();
+
                 else if(s.contains("error") || s.contains("Error") || s.contains("false")){
                     Log.d("APP","Response: "+s);
-                    //Toast.makeText(ManageData.this,"Error occured, please try again letter",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ManageData.this,"Error occured, please try again letter",Toast.LENGTH_LONG).show();
                 }
                 else if(s.contains("true")){
                     Toast.makeText(ManageData.this,"Items deleted successfully",Toast.LENGTH_LONG).show();
-                    Intent intent=new Intent(ManageData.this,ManageData.class);
-                    startActivity(intent);
-                    finish();
+//                    Intent intent=new Intent(ManageData.this,ManageData.class);
+//                    startActivity(intent);
+                   // finish();
                 }
+                Log.d("APP","ResponseDel: "+s);
             }
         };
-        final PostResponseAsyncTask task=new PostResponseAsyncTask(this,map,response);
+        final PostResponseAsyncTask task=new PostResponseAsyncTask(ManageData.this,map,response);
         if(i<1){
             Toast.makeText(this,"No items selected",Toast.LENGTH_LONG).show();
             return;
         }
-
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("Confirm Delete");
-        builder.setMessage("Are you sure to delete "+i+" items?");
-        builder.setPositiveButton("Yes",
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this);
+        dialog.setTitle("Confirm Delete");
+        dialog.setMessage("Are you sure to delete "+i+" persons?");
+        dialog.setPositiveButton("Yeah sure",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                        exec=true;
-
+                        task.execute(Login.server + "/census/get.php");
                     }
-                }
-        );
-        builder.setNegativeButton("No",
+                });
+        dialog.setNegativeButton("No",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        Toast.makeText(ManageData.this,"Canceled",Toast.LENGTH_SHORT).show();
-                        exec=false;
                     }
                 }
         );
-        builder.show();
-        if(exec) {
-
-            Toast.makeText(this,"Excec is true & task executed",Toast.LENGTH_LONG).show();
-        }
-        else
-            Toast.makeText(this,"Deletion Canceled",Toast.LENGTH_LONG).show();
-        task.execute(Login.server + "/census/get.php");
+        dialog.show();
     }
     public void search(String term){
         HashMap map=new HashMap();
@@ -191,7 +195,7 @@ public class ManageData extends AppCompatActivity {
             @Override
             public void processFinish(String s) {
                 if(s==null || s.isEmpty()){
-                    Valid.showDialog(ManageData.this,"Connection Failed","Conection to server failed at the momment");
+                    Valid.showDialog(ManageData.this,"Empty Response","No results found");
                 }
                 else if(s.contains("error") || s.contains("Error")){
                     Log.d("APP","Response: "+s);
@@ -291,7 +295,7 @@ public class ManageData extends AppCompatActivity {
             map.put("value",value);
             map.put("key",key);
             map.put("keyValue",keyValue);
-            final AsyncResponse response=new AsyncResponse() {
+            AsyncResponse response=new AsyncResponse() {
                 @Override
                 public void processFinish(String s) {
                     if(s==null || s.isEmpty()) {

@@ -64,7 +64,9 @@
             android:label="@string/title_activity_census_form"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AreaIdentificationActivity" />
-        <activity android:name=".ReportActivity"></activity>
+        <activity android:name=".ReportActivity" />
+        <activity android:name=".ActivityDelete" />
+        <activity android:name=".EditorActivity"></activity>
     </application>
 
 </manifest>

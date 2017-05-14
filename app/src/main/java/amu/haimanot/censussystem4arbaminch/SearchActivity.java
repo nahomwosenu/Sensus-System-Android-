@@ -40,6 +40,13 @@ public class SearchActivity extends AppCompatActivity {
         btnCancel=(Button)findViewById(R.id.btnCancel);
         lblResult=(TextView)findViewById(R.id.labelResult);
         getAll();
+        btnCancel.setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(View v){
+                        etSearch.setText("");
+                    }
+                }
+        );
         etSearch.setOnEditorActionListener(
                 new TextView.OnEditorActionListener() {
                     @Override
